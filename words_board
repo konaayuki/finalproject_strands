@@ -29,28 +29,27 @@
 
 
 #DEFINE BOARD
-boardsize = [6,8] #6 ROWS, 8 COLIUMNS
+boardsize = [8,6] 
 gameboard = [[' ' for i in range(boardsize[1])] for i in range (boardsize[0])]
 
-#test input
-word = "mountain" 
-start_row = 1
-start_col = 1
-direction = 'vertical'
+import random
+world_piece = ["MARSH", "MOUNTAIN", "SWAMP", "TERRAIN", "PLAIN", "FOREST", "TUNDRA", "DESERT"]
+def words_on_board (world_piece, gameboard, boardsize):
+    for i in range (0, len(world_piece)):
+        
+        #random placement on gameboard
+        start_row = random.randint(0, boardsize[0] - 1)
+        start_col = random.randint(0, boardsize[1] - 1)
+        direction = random.choice(['vertical', 'horizontal'])
+        
+        for letter in world_piece[i]:
+            if start_row < 0 or start_row >= boardsize[0] or start_col < 0 or start_col >=boardsize[1] or (gameboard[start_row][start_col] != ' ' and gameboard[start_row][start_col] != letter):
+                break
+            gameboard[start_row][start_col] = letter
+            if direction =='vertical':
+                start_row+=1
+            else:
+                start_col+=1
 
-def words_on_board (word, start_row, start_col, direction):
-    for letter in word:
-        if start_row < 0 or start_row >= boardsize[0] or start_col < 0 or start_col >=boardsize[1] or (gameboard[start_row][start_col] != ' ' and gameboard[start_row[start_col] != letter]):
-            return False
-        gameboard[start_row][start_col] = letter
-        if direction =='vertical':
-            start_row+=1
-        else:
-            start_col+=1
-    
-    return True
-
-words_on_board(word, start_row, start_col, direction)
-for row in gameboard:
-    print(' '.join(f'{cell:^3}' for cell in row))
+words_on_board(world_piece, gameboard, boardsize)
 print (gameboard)
