@@ -102,24 +102,29 @@ def look_neighbours(board, start_row, start_col): #function to check spots aroun
     #x,y = index
     possible_list = [] #create a list of possible options to go next
 
-    if (start_row +1) < len(board) and board[start_row +1][start_col] == 0: #checks option to the right, same height
+    if (start_row +1) < 8 and board[start_row +1][start_col] == 0: #checks option in the row above but the same column
         possible_list.append([start_row+1, start_col])
 
-    if (start_row -1) >= 0 and board[start_row -1][start_col] == 0: #checks option to the left, same height
+    if (start_row -1) >= 0 and board[start_row -1][start_col] == 0: #check option in the row below but the same column
         possible_list.append([start_row-1, start_col])
 
-    if (start_col +1) < len(board[0]) and board[start_row][start_col+1] == 0: #checks option above
+    if (start_col +1) < 6 and board[start_row][start_col+1] == 0: #check option in the same row but the column to the right
         possible_list.append([start_row, start_col+1])
     
-    if (start_col - 1) >=0 and board[start_row, start_col-1] == 0: #checks option below
+    if (start_col - 1) >=0 and board[start_row, start_col-1] == 0: #check option in the same row but the column to the left
         possible_list.append([start_row, start_col-1])
+    
+    if (start_row+1) <8 and (start_col+1) <6 and board[start_row+1][start_col+1] == 0: #top right (one row up, column to the right)
+        possible_list.append([start_row+1, start_col+1])
+    
+    if (start_row+1) < 8 and (start_col-1) >=0 and board[start_row+1][start_col-1] == 0: #top left 
+        possible_list.append([start_row+1, start_col-1])
 
 
     # if board(x+1, y) ==0: #if the spot is empty
     #     possible_list.append([x+1,y]) 
     # if board(x-1,y) ==0:
     #     possible_list.append([x+1,y]) 
-    
     
 
                 
