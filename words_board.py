@@ -29,27 +29,84 @@
 
 
 #DEFINE BOARD
-boardsize = [8,6] 
-gameboard = [[' ' for i in range(boardsize[1])] for i in range (boardsize[0])]
+# boardsize = [8,6] 
+# gameboard = [[' ' for i in range(boardsize[1])] for i in range (boardsize[0])]
+
+# import random
+# world_piece = ["MARSH", "MOUNTAIN", "SWAMP", "TERRAIN", "PLAIN", "FOREST", "TUNDRA", "DESERT"]
+# def words_board (world_piece, gameboard, boardsize):
+    # placed_word = False
+    # while not placed_word:
+    #     #randomly place the words on the board
+    #      start_row = random.randint(0, boardsize[0] - 1) 
+    #      start_col = random.randint(0, boardsize[1] - 1)
+    #      direction = random.choice(['vertical', 'horizontal'])
+
+    #      for i in range (0, len(world_piece)):
+    #         if direction == 'vertical':
+    #             if start_row + len(world_piece[i]) <= boardsize[0]:
+    #                 placed_valid = True
+                
+
+#      for i in range (0, len(world_piece)): #run for the number of words there are
+#     #randomly place the words on the board
+#         start_row = random.randint(0, boardsize[0] - 1) 
+#         start_col = random.randint(0, boardsize[1] - 1)
+#         direction = random.choice(['vertical', 'horizontal'])
+        
+#         for letter in world_piece[i]:
+#             if start_row < 0 or start_row >= boardsize[0] or start_col < 0 or start_col >=boardsize[1] or (gameboard[start_row][start_col] != ' ' and gameboard[start_row][start_col] != letter):
+#                 break
+#             gameboard[start_row][start_col] = letter #place letters on the board
+#             if direction =='vertical':
+#                 start_row+=1
+#             else:
+#                 start_col+=1
+
+# words_board(world_piece, gameboard, boardsize)
+# print (gameboard)
+
+
+#DEFINE GRAPH
+import numpy as np
+graph_board = np.zeros((8,6))
+
+#DEFINE BOARD
+board = [8,6]
+board = [[' ' for i in range(board[1])] for i in range (board[0])]
+
+#TESTING LIST
+world_piece = ["MARSH", "MOUNTAIN", "SWAMP", "TERRAIN", "PLAIN", "FOREST", "TUNDRA", "DESERT"]
 
 import random
-world_piece = ["MARSH", "MOUNTAIN", "SWAMP", "TERRAIN", "PLAIN", "FOREST", "TUNDRA", "DESERT"]
-def words_board (world_piece, gameboard, boardsize):
-    for i in range (0, len(world_piece)):
-        
-        #random placement on gameboard
-        start_row = random.randint(0, boardsize[0] - 1)
-        start_col = random.randint(0, boardsize[1] - 1)
-        direction = random.choice(['vertical', 'horizontal'])
-        
-        for letter in world_piece[i]:
-            if start_row < 0 or start_row >= boardsize[0] or start_col < 0 or start_col >=boardsize[1] or (gameboard[start_row][start_col] != ' ' and gameboard[start_row][start_col] != letter):
-                break
-            gameboard[start_row][start_col] = letter
-            if direction =='vertical':
-                start_row+=1
-            else:
-                start_col+=1
 
-words_board(world_piece, gameboard, boardsize)
-print (gameboard)
+def words_board (world_piece, graph_board, board):
+    for word in world_piece: #run for the number of words in the list
+        placed = False
+
+        while not placed:
+        #randomly choose starting position
+            start_row = random.randint(0, board[0] - 1) 
+            start_col = random.randint(0,board[1]-1)
+            start_placement = (start_row,start_col)
+            
+            if graph_board(start_placement) == 0: #check if the spot is empty
+                if check_options(start_placement, graph_board, word): #check if the spots around it are empty
+                    placed = True
+
+def check_options(start_placement, graph_board, board):
+    n = look_neighbours(start_placement, graph_board,board)
+    for index in n:
+        if graph_board(index) == 0:
+            options.append()
+
+def look_neighbours(inedx, graph_board, board):
+    x,y = index
+    possible_list = [z]
+    if board(x+1, y) ==0:
+        possible_list.append([x+1,y])
+    
+
+                
+
+
