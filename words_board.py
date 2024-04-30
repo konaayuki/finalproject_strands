@@ -73,6 +73,7 @@ graph_board = np.zeros((8,6))
 
 #DEFINE BOARD
 board = [8,6]
+print (len(board))
 board = [[' ' for i in range(board[1])] for i in range (board[0])]
 
 #TESTING LIST
@@ -82,29 +83,43 @@ import random
 
 def words_board (world_piece, graph_board, board):
     for word in world_piece: #run for the number of words in the list
-        placed = False
-
-        while not placed:
+        
         #randomly choose starting position
-            start_row = random.randint(0, board[0] - 1) 
-            start_col = random.randint(0,board[1]-1)
-            start_placement = (start_row,start_col)
-            
-            if graph_board(start_placement) == 0: #check if the spot is empty
-                if check_options(start_placement, graph_board, word): #check if the spots around it are empty
-                    placed = True
+        start_row = random.randint(0, board[0] - 1) 
+        start_col = random.randint(0,board[1]-1)
+        start_placement = (start_row,start_col)
+        
+        if graph_board[start_placement[0]][start_placement[1]] == 0: #if the starting position is empty
+            n = look_neighbours(board, start_row, start_col)
 
-def check_options(start_placement, graph_board, board):
-    n = look_neighbours(start_placement, graph_board,board)
-    for index in n:
-        if graph_board(index) == 0:
-            options.append()
+# def select_options(start_placement, graph_board, board): #out of the empty spots found in look_neighbours, randomly select one spot
+ #    n = look_neighbours(start_placement, graph_board)
+     #for index in n:
+      #   if graph_board(index) == 0:
+       #      options.append()
 
-def look_neighbours(inedx, graph_board, board):
-    x,y = index
-    possible_list = [z]
-    if board(x+1, y) ==0:
-        possible_list.append([x+1,y])
+def look_neighbours(board, start_row, start_col): #function to check spots around
+    #x,y = index
+    possible_list = [] #create a list of possible options to go next
+
+    if (start_row +1) < len(board) and board[start_row +1][start_col] == 0: #checks option to the right, same height
+        possible_list.append([start_row+1, start_col])
+
+    if (start_row -1) >= 0 and board[start_row -1][start_col] == 0: #checks option to the left, same height
+        possible_list.append([start_row-1, start_col])
+
+    if (start_col +1) < len(board[0]) and board[start_row][start_col+1] == 0: #checks option above
+        possible_list.append([start_row, start_col+1])
+    
+    if (start_col - 1) >=0 and board[start_row, start_col-1] == 0: #checks option below
+        possible_list.append([start_row, start_col-1])
+
+
+    # if board(x+1, y) ==0: #if the spot is empty
+    #     possible_list.append([x+1,y]) 
+    # if board(x-1,y) ==0:
+    #     possible_list.append([x+1,y]) 
+    
     
 
                 
