@@ -17,22 +17,24 @@ def words_board (world_piece, graph_board, board):
     #randomly choose starting position
 
     #loop for each word
-    for i in range (0, len(world_piece)):
+    for i in range (0, len(world_piece)):   
         word = world_piece[i]
         word_placement = False
-        attempts = 0
 
         while not word_placement:
             start_row = random.randint(0, 7) 
             start_col = random.randint(0,5)
             start_placement=[start_row,start_col]
-            attempts+=1
             temp_board = [row.copy() for row in board]
 
+            valid_placement = True
             for letter in word: #loop for each letter in one word
 
                 if graph_board[start_placement[0]][start_placement[1]] == 0: #if the starting position is empty
                     possible_list = look_neighbours(graph_board, start_row, start_col) #looks for possible options for the next letter
+                    if not possible_list:
+                        valid_placement = False
+                        break
                     board,select_position = select_options(graph_board, board,letter, possible_list) #randomly chooses option to go for the next letter
                     
                     if select_position != start_placement and select_position != None: #if the next position is valid, update the variables to the most recent position
@@ -42,16 +44,12 @@ def words_board (world_piece, graph_board, board):
                     if select_position == None: #if there is no next position, break the loop
                         break
                 else:
+                    valid_placement = False
                     break
-            else:
+            if valid_placement:
                 word_placement = True
-                break 
-
-            if attempts >=100:
-                break
-        
-            #reset board if the word doesn't get placed
-            board = temp_board
+            else:
+                board=temp_board
 
 def select_options( graph_board, board,letter, possible_list): #out of the empty spots found in look_neighbours, randomly select one spot
     select_position = None #default value

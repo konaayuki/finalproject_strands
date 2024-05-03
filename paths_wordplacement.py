@@ -3,8 +3,9 @@
 import random
 
 #DEFINE BOARD
-#board = [8,6]
-#board = [[ '_' for i in range(6)] for j in range(8)]
+board = [4,4]
+board = [[ '_' for i in range(4)] for j in range(4)]
+test_list = ['CHIP', 'LEFT', 'WATER', 'TOE']
 
 import random
 
@@ -30,14 +31,20 @@ def find_paths(x, y, rows, cols, path, visited, paths):
 
 def generate_hamiltonian_paths(rows, cols):
     n = rows * cols #number of spaces
-    print(n)
+    #print(n)
     paths = []
     start_x, start_y = random.randint(0, rows-1), random.randint(0, cols-1) #randomly generate starting position for the path
-    print(start_x,start_y)
+    #print(start_x,start_y)
     find_paths(start_x, start_y, rows, cols, [], set(), paths)
     return paths, (start_x, start_y)
 
-#GENERATE PATHS IN AN 8X6 GRID
-rows, cols = 2, 2
+#GENERATE PATHS IN A GRID
+rows, cols = 4,4
 all_paths, start_point = generate_hamiltonian_paths(rows, cols)
-print(all_paths)
+#print ('HERE2')
+#print(all_paths)
+
+selected_path = random.choice(all_paths) #randomly select one of the paths
+
+print ('SELECTED PATH')
+print (selected_path)

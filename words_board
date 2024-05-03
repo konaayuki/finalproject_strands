@@ -34,7 +34,7 @@ gameboard = [[' ' for i in range(boardsize[1])] for i in range (boardsize[0])]
 
 import random
 world_piece = ["MARSH", "MOUNTAIN", "SWAMP", "TERRAIN", "PLAIN", "FOREST", "TUNDRA", "DESERT"]
-def words_on_board (world_piece, gameboard, boardsize):
+def words_board (world_piece, gameboard, boardsize):
     for i in range (0, len(world_piece)):
         
         #random placement on gameboard
@@ -51,5 +51,5 @@ def words_on_board (world_piece, gameboard, boardsize):
             else:
                 start_col+=1
 
-words_on_board(world_piece, gameboard, boardsize)
+words_board(world_piece, gameboard, boardsize)
 print (gameboard)
