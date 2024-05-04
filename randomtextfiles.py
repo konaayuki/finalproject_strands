@@ -25,3 +25,9 @@ def find_word_bycount(file_path, need_count):
             selected_words.append(word)
             
     return selected_words
+
+"""
+example:
+file_path = 'file.txt'
+
+"""
