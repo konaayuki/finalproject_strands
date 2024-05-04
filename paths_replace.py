@@ -3,9 +3,10 @@
 import random
 
 #DEFINE BOARD
-board = [6,5]
-board = [[ '_' for i in range(6)] for j in range(5)]
-test_list = ['CHIP', 'LEFT', 'DREAM', 'POP','CHOCOLATE','SPIKE']
+board = [4,4]
+board = [[ '_' for i in range(4)] for j in range(4)]
+#test_list = ['CHIP', 'LEFT', 'DREAM', 'POP','CHOCOLATE','SPIKE']
+test_list = ['DREAM', 'PIE', 'CHALK', 'TOP']
 
 import random
 
@@ -36,22 +37,16 @@ def fill_board(board, test_list,all_paths):
         for letter in word:
             split_list.append(letter)
     
-    if len(split_list) == len(all_paths[0]):
-        print('HERE')
+    # if len(split_list) == len(all_paths[0]):
+    #     print('HERE')
 
-    for i in range (0, len(all_paths[0])):
-       x,y = all_paths[0][i]
-       board[x][y] = split_list[i]
-       #print ( all_paths[0][i] )
-       #all_paths[0][i] = split_list[i]
-       #print (all_paths[0][i])
+    for i in range (0, len(all_paths[0])): 
+        print (all_paths[0][i]) #accesses the individual coordinates
+        x,y = all_paths[0][i]
+        print (x,y)
+        print(split_list[i])
+        board[x][y] = split_list[i]
 
-       #board[all_paths[0][i][0]],board[all_paths[0][i][1]]=split_list[i]
-    
-   #print (split_list)
-
-    # for i in range (0, len(all_paths[0])): #30 spots
-    #     board[all_paths[0][i][0]][all_paths[0][i][1]]=split_list[i]
     return board
 
 def generate_hamiltonian_paths(rows, cols):
@@ -64,13 +59,13 @@ def generate_hamiltonian_paths(rows, cols):
     return paths, (start_x, start_y)
 
 #GENERATE PATHS IN A GRID
-rows, cols = 6,5
+rows, cols = 4,4
 all_paths, start_point = generate_hamiltonian_paths(rows, cols)
 fill_board(board, test_list,all_paths)
 
 #print(all_paths)
 
-# print (all_paths[0])
+#print (all_paths[0])
 # print (all_paths[0][0][0])
 # print (all_paths[0][0][1])
 # print (all_paths[0][1][0])
