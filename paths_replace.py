@@ -3,10 +3,11 @@
 import random
 
 #DEFINE BOARD
-board = [4,4]
-board = [[ '_' for i in range(4)] for j in range(4)]
-#test_list = ['CHIP', 'LEFT', 'DREAM', 'POP','CHOCOLATE','SPIKE']
-test_list = ['DREAM', 'PIE', 'CHALK', 'TOP']
+board = [3,2]
+board = [[ '_' for i in range(3)] for j in range(2)]
+#test_list = ['CHIP', 'LEFT', 'DREAM', 'POP','CHOCOLATE','SPIKE', 'LAUNCH'] #FOR 6X6
+#test_list = ['DREAM', 'PIE', 'CHALK', 'TOP','SPOT', 'SPIKE'] #FOR 5 X 5
+test_list = ['HI', 'TEST']
 
 import random
 
@@ -41,10 +42,10 @@ def fill_board(board, test_list,all_paths):
     #     print('HERE')
 
     for i in range (0, len(all_paths[0])): 
-        print (all_paths[0][i]) #accesses the individual coordinates
+        #print (all_paths[0][i]) #accesses the individual coordinates
         x,y = all_paths[0][i]
-        print (x,y)
-        print(split_list[i])
+        #print (x,y)
+        #print(split_list[i])
         board[x][y] = split_list[i]
 
     return board
@@ -59,7 +60,7 @@ def generate_hamiltonian_paths(rows, cols):
     return paths, (start_x, start_y)
 
 #GENERATE PATHS IN A GRID
-rows, cols = 4,4
+rows, cols = 3,2
 all_paths, start_point = generate_hamiltonian_paths(rows, cols)
 fill_board(board, test_list,all_paths)
 
