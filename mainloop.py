@@ -139,13 +139,10 @@ def main():
         draw_textbox(170, 324, 280, 100, 'YAY', 40, WHITE, border=True) #f'{random_theme}'
         #'THEME' textbox
         draw_textbox(170, 300, 280, 24, 'THEME', 22, LIGHTBLUE, border=False)
-
-        draw_textbox(600, 145, 420, 560, 'na', 22, WHITE, border=True)
-
+        #strands board!
         draw_board(screen, game_board, clicked_cells, letter_font)
 
         pygame.display.flip()
-
         clock.tick(30)
 
     """
