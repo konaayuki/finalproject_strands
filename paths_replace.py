@@ -3,10 +3,11 @@
 import random
 
 #DEFINE BOARD
-board = [5,5]
+#board = [7,7]
 board = [[ '_' for i in range(5)] for j in range(5)]
 #test_list = ['CHIP', 'LEFT', 'DREAM', 'POP','CHOCOLATE','SPIKE', 'LAUNCH'] #FOR 6X6
 test_list = ['DREAM', 'PIE', 'CHALK', 'TOP','SPOT', 'SPIKE'] #FOR 5 X 5
+#test_list = ['CHARACTER', 'TOWEL', 'SOCK', 'DREAM', 'TOMATO', 'GINGER', 'STRAWBERRY', 'COAL'] #FOR 7X7
 #test_list = ['HI', 'TEST', 'POT'] #for 3x3
 #test_list = ['HI', 'TEST']
 
