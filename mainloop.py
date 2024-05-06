@@ -40,9 +40,14 @@ def generate_board():
     return[[random.choice(all_letters) for _ in range (board_cols)] for _ in range(board_rows)]
 
 #formatting the cells of the board
-def draw_board(screen, board, clicked_cells, font):
+def draw_board(screen, board, clicked_cells, font, clicked_letters):
     cell_width = board_width // board_cols
     cell_height = board_height // board_rows
+
+    #displaying letters at the top of the screen
+    display_text = ''.join(clicked_letters)
+    display_text_surface = letter_font.render(display_text, True, BLACK)
+    screen.blit(display_text_surface, (600, 120))
 
     #added on by yuki for location of board
     start_board_x = 600
@@ -87,7 +92,6 @@ def draw_textbox(x, y, width, height, text, font_size, rectcolor, border=True):
     screen.blit(the_text, text_alignment)
                 
 
-
 #text [blank] out of [blank] words found
 
 """
@@ -112,6 +116,9 @@ def main():
 
     game_board = generate_board()
     clicked_cells = set()
+    clicked_letters = [] #tracking clicked letters to display
+    last_clicked_cell = None #in tracking whether next clicked is adjacent 
+
 
     running = True
     while running:
@@ -120,18 +127,49 @@ def main():
 
             if event.type == pygame.QUIT:
                 running = False
-        #added click_function.py
+            #added click_function.py
             elif event.type == pygame.MOUSEBUTTONDOWN:
+                #to stop it from reacting when it scrolls
+                if event.button in (4, 5):
+                    continue
                 x_hit, y_hit = pygame.mouse.get_pos()
-                col = (x_hit - 600) // 70
-                row = (y_hit - 145) // 70
-                clicked_cells.add((row,col))
+                col = (x_hit - 600) // 70 #1-6
+                row = (y_hit - 145) // 70 #1-8
+                #clicked_cells.add((row,col))
 
+                
+                if 0 <= row < board_rows and 0 <= col < board_cols:
+                    #condition using absolute value to check distance between clicks
+                    if last_clicked_cell is None or (abs(last_clicked_cell[0] - row) <= 1 and abs(last_clicked_cell[1] - col) <= 1):
+                        if (row, col) not in clicked_cells:
+                            clicked_cells.add((row,col))
+                            clicked_letters.append(game_board[row][col])
+                            last_clicked_cell = (row, col)
+                            #print(f'valid check')
+                        #else: 
+                            #print('cell already clicked')
+                    #else:
+                        #print(f'not a valid check')
+                else:
+                    clicked_letters.clear()
+                    clicked_cells.clear()
+                    last_clicked_cell = None
+                    #print('cleared board')
+                    
+                """
                 print("Clicked cell (row, col):", (row, col))  # Print clicked cell coordinates for debugging
+
                 if 0 <= row < board_rows and 0 <= col < board_cols:
                     clicked_cells.add((row, col))  # Only add clicked cells within board dimensions
                 else:
                     print("Clicked outside of board range.")
+                """
+            #to stop it from reacting when it scrolls
+            elif event.type == pygame.MOUSEBUTTONUP:
+                if event.button in (4, 5):
+                    continue
+            elif event.type == pygame.MOUSEWHEEL:
+                continue
 
         screen.fill(WHITE)
 
@@ -140,7 +178,7 @@ def main():
         #'THEME' textbox
         draw_textbox(170, 300, 280, 24, 'THEME', 22, LIGHTBLUE, border=False)
         #strands board!
-        draw_board(screen, game_board, clicked_cells, letter_font)
+        draw_board(screen, game_board, clicked_cells, letter_font, clicked_letters)
 
         pygame.display.flip()
         clock.tick(30)
