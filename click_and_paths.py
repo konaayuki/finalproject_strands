@@ -19,6 +19,7 @@ letter_display_height = 50
 
 test_list = ['DREAM', 'PIE', 'CHALK', 'TOP','SPOT', 'SPIKE']
 board = [[ '_' for i in range(5)] for j in range(5)]
+word_found = False #if a word has been found
 
 def is_valid_move(x, y, rows, cols, visited):
     return 0 <= x < rows and 0 <= y < cols and (x, y) not in visited
@@ -87,15 +88,16 @@ def draw_board(screen, board, clicked_cells, font, clicked_letters):
       cell_rect = pygame.Rect(x, y, cell_width, cell_height)
 
       # drawing gray if clicked 
+
       if (row_index, col_index) in clicked_cells: 
         if valid_word:
-            pygame.draw.rect(screen, (0,0,255), cell_rect)
+            pygame.draw.rect(screen, (170,220,230), cell_rect)
         else:
             pygame.draw.rect(screen, gray, cell_rect)
 
       else: 
         pygame.draw.rect(screen, black, cell_rect)
-        # edit: 
+
       text_surface = font.render(letter, True, white)
       screen.blit(text_surface, (x + 10, y + 10))
 
@@ -112,6 +114,7 @@ def main():
     last_clicked_cell = None # to track whether next letter is adjacent
 
     running = True 
+    word_found = False
     while running: 
         
             for event in pygame.event.get():
@@ -124,21 +127,30 @@ def main():
                     col = x // (screen_width // board_cols) 
                     row = (y - letter_display_height) // ((screen_height - letter_display_height) // board_rows)
                     if 0 <= row < board_rows and 0 <= col < board_cols: 
-                        
-                        # condition using absolute value to check distance between clicks
-                        if last_clicked_cell is None or (
-                          abs(last_clicked_cell[0] - row) <= 1 and
-                          abs(last_clicked_cell[1] - col) <= 1):
-                          clicked_cells.add((row, col))
-                          clicked_letters.append(game_board[row][col])
-                          last_clicked_cell = (row, col)
-                          print(f"valid click") #debug
-                        else: 
-                          print(f'not a valid click')
+                        if (row, col) == last_clicked_cell: #to reset and try a new word (user initiated by clicking the same last letter twice)
+                            clicked_cells.clear()
+                            clicked_letters.clear()
+                        else:
+                            # condition using absolute value to check distance between clicks
+                            if last_clicked_cell is None or (
+                                abs(last_clicked_cell[0] - row) <= 1 and
+                                abs(last_clicked_cell[1] - col) <= 1):
+                                
+                                clicked_cells.add((row, col))
+                                clicked_letters.append(game_board[row][col])
+                                last_clicked_cell = (row, col)
+
+                                if word_found and clicked_word not in test_list: 
+                                    last_clicked_cell = (row, col)
+                                    #if a word was found in the previous turn 
+
+                                print(f"valid click") #debug
+                            else: 
+                                print(f'not a valid click')
                     else: # clear board if player clicks outside of cells
-                       clicked_letters.clear()
-                       clicked_cells.clear()
-                       last_clicked_cell = None
+                    #    clicked_letters.clear()
+                    #    clicked_cells.clear()
+                    #    last_clicked_cell = None
                        print("Cleared board") #debug
             
         
@@ -146,8 +158,14 @@ def main():
             draw_board(screen, game_board, clicked_cells, font, clicked_letters)
             pygame.display.flip()
             clock.tick(30)
-        
-    
+
+            #clicked_word = ''.join(clicked_letters)
+            #if clicked_word in test_list:
+            #     game_board=fill_board(board,test_list,all_paths)
+            #     clicked_cells.clear()
+            #     clicked_letters.clear()
+            #     last_clicked_cell=None
+            #     word_found = True
 
     pygame.quit()
       
@@ -155,4 +173,4 @@ def main():
 if __name__ == '__main__':
     main()
 
-print (board)
+#print (board)
