@@ -48,8 +48,6 @@ def fill_board(board, test_list,all_paths):
 
     for i in range (0, len(all_paths[0])): 
         x,y = all_paths[0][i]
-        #print (split_list[i])
-
         board[x][y] = split_list[i]
 
     return board
@@ -75,6 +73,9 @@ def draw_board(screen, board, clicked_cells, font, clicked_letters):
   text_surface = font.render(display_text, True, white)
   screen.blit(text_surface, (10, 10))
 
+  clicked_word = ''.join(clicked_letters)
+  valid_word = clicked_word in test_list
+
   # drawing letters in the correct spaces
   for row_index in range(board_rows): 
     for col_index in range(board_cols):
@@ -87,7 +88,11 @@ def draw_board(screen, board, clicked_cells, font, clicked_letters):
 
       # drawing gray if clicked 
       if (row_index, col_index) in clicked_cells: 
-        pygame.draw.rect(screen, gray, cell_rect)
+        if valid_word:
+            pygame.draw.rect(screen, (0,0,255), cell_rect)
+        else:
+            pygame.draw.rect(screen, gray, cell_rect)
+
       else: 
         pygame.draw.rect(screen, black, cell_rect)
         # edit: 
@@ -119,6 +124,7 @@ def main():
                     col = x // (screen_width // board_cols) 
                     row = (y - letter_display_height) // ((screen_height - letter_display_height) // board_rows)
                     if 0 <= row < board_rows and 0 <= col < board_cols: 
+                        
                         # condition using absolute value to check distance between clicks
                         if last_clicked_cell is None or (
                           abs(last_clicked_cell[0] - row) <= 1 and
