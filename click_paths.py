@@ -2,6 +2,10 @@ import random
 import string 
 import pygame
 
+# to do: allow game to continue after correctly clicking a word 
+# hold blue/yellow color after correct word and continue 
+# 
+
 # defining colors 
 black = (0, 0, 0)
 white = (255, 255, 255)
