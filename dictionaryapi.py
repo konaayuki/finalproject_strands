@@ -1,4 +1,5 @@
 #import os
+pip install requests
 import random
 import requests
 #import urllib3
