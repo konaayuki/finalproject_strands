@@ -4,7 +4,7 @@ import random
 import numpy as np 
 import os 
 #GENERATE PATHS IN A GRID
-rows, cols = 8,6
+rows, cols = 5,5
 
 #DEFINE BOARD
 board = [[ '_' for i in range(rows)] for j in range(cols)]
@@ -60,14 +60,13 @@ def generate_hamiltonian_paths(rows, cols):
     find_paths(start_x, start_y, rows, cols, [], set(), paths)
     return paths, (start_x, start_y)
 
+# filename= f'{rows}{cols}.npy'
+# if os.path.exists(filename):
+#     all_paths = np.load(filename)
+# else:
 
-
-filename= f'{rows}{cols}.npy'
-if os.path.exists(filename):
-    all_paths = np.load(filename)
-else:
-    all_paths, start_point = generate_hamiltonian_paths(rows, cols)
-    save_paths(filename,all_paths)
+all_paths, start_point = generate_hamiltonian_paths(rows, cols)
+#     save_paths(filename,all_paths)
 
 fill_board(board, test_list,all_paths)
 
