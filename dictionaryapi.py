@@ -1,4 +1,5 @@
 #import os
+pip install requests
 import random
 import requests
 #import urllib3
@@ -11,7 +12,7 @@ import requests
 #limited to words of 4 to 12 letters
 def datamuse_api_get(query):
     url = 'https://api.datamuse.com/words'
-    parameters = {'ml': query, 'max': 50, 'sp': '???? - ????????????'}
+    parameters = {'ml': query, 'max': 50, 'sp': '???? - ????????????', 'partOfSpeech':'n'}
     response = requests.get(url, params= parameters)
     return response.json() #ask about this
     
