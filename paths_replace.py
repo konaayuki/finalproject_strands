@@ -8,11 +8,8 @@ rows, cols = 5,5
 
 #DEFINE BOARD
 board = [[ '_' for i in range(rows)] for j in range(cols)]
-#test_list = ['SPARK', 'TIES']
-#test_list = ['SCOPE', 'CREAM', 'GRAHAM']
-#test_list = ['CHOCOLATE', 'MARSHMELLOW', 'GRAHAM', 'FIREPIT' ,'POT']
-#test_list = ['DREAM', 'PIE', 'CHALK', 'TOP','SPOT', 'SPIKE'] #FOR 5 X 5
-test_list = ['CHOCOLATE', 'MARSHMELLOW', 'GRAHAM', 'FIREPIT', 'SMORE', 'ROAST', 'CRISP'] #FOR 8x6
+#test_list = ['CHOCOLATE', 'MARSHMELLOW', 'GRAHAM', 'FIREPIT', 'SMORE', 'ROAST', 'CRISP'] #FOR 8x6
+test_list = ['BUNNY', 'MARSHMALLOW', 'GRAHAM', 'THE']
 
 import random
 
@@ -70,4 +67,4 @@ all_paths, start_point = generate_hamiltonian_paths(rows, cols)
 
 fill_board(board, test_list,all_paths)
 
-print (board)
+print (all_paths[0])

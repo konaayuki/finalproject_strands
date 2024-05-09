@@ -17,7 +17,7 @@ board_rows = 5
 font_size = 32
 letter_display_height = 50 
 
-test_list = ['DREAM', 'PIE', 'CHALK', 'TOP','SPOT', 'SPIKE']
+combination = ['DREAM', 'PIE', 'CHALK', 'TOP','SPOT', 'SPIKE']
 board = [[ '_' for i in range(5)] for j in range(5)]
 word_found = False #if a word has been found
 
@@ -40,10 +40,10 @@ def find_paths(x, y, rows, cols, path, visited, paths):
     visited.remove((x, y))
     path.pop()
 
-def fill_board(board, test_list,all_paths):
+def fill_board(board, combination,all_paths):
 
     split_list = []
-    for word in test_list:
+    for word in combination:
         for letter in word:
             split_list.append(letter)
 
@@ -62,7 +62,7 @@ def generate_hamiltonian_paths(rows, cols):
 #GENERATE PATHS IN A GRID
 rows, cols = 5,5
 all_paths, start_point = generate_hamiltonian_paths(rows, cols)
-fill_board(board, test_list,all_paths)
+fill_board(board, combination,all_paths)
 
 # function to format cells and stylize board 
 def draw_board(screen, board, clicked_cells, font, clicked_letters): 
@@ -76,7 +76,7 @@ def draw_board(screen, board, clicked_cells, font, clicked_letters):
 
   clicked_word = ''.join(clicked_letters)
   
-  valid_word = clicked_word in test_list #checks if clicked_word is in test_list (True or False)
+  valid_word = clicked_word in combination #checks if clicked_word is in test_list (True or False)
   
   #valid/invalid cases (i.e. 2 ways to get one word)
   valid_path = False
@@ -115,7 +115,7 @@ def main():
     font = pygame.font.SysFont(None, font_size)
     clock = pygame.time.Clock()
 
-    game_board = fill_board(board, test_list, all_paths)
+    game_board = fill_board(board, combination, all_paths)
     clicked_cells = set()
     clicked_letters = [] # tracking clicked letters for display
     last_clicked_cell = None # to track whether next letter is adjacent
@@ -147,7 +147,7 @@ def main():
                                 clicked_letters.append(game_board[row][col])
                                 last_clicked_cell = (row, col)
 
-                                if word_found and clicked_word not in test_list: 
+                                if word_found and clicked_word not in combination: 
                                     last_clicked_cell = (row, col)
                                     #if a word was found in the previous turn 
 
@@ -166,13 +166,6 @@ def main():
             pygame.display.flip()
             clock.tick(30)
 
-            #clicked_word = ''.join(clicked_letters)
-            #if clicked_word in test_list:
-            #     game_board=fill_board(board,test_list,all_paths)
-            #     clicked_cells.clear()
-            #     clicked_letters.clear()
-            #     last_clicked_cell=None
-            #     word_found = True
 
     pygame.quit()
       
