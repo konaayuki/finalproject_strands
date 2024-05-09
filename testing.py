@@ -28,16 +28,12 @@ def fill_board(board, combination,all_paths):
     for word in combination:
         for letter in word:
             split_list.append(letter)
-    
-    if len(split_list) != len(all_paths[0]): #INCASE - FOR NOW
-        print("Error: Combination length does not match path length")
-        return board
 
     for i in range (0, len(all_paths[0])): 
         x,y = all_paths[0][i]
         board[x][y] = split_list[i]
 
-    return board
+    return board, split_list
 
 def generate_hamiltonian_paths(board_rows, board_cols,combination):
     paths = []
@@ -45,7 +41,16 @@ def generate_hamiltonian_paths(board_rows, board_cols,combination):
     find_paths(start_x, start_y, board_rows, board_cols, [], set(), paths)
     return paths, combination
 
+#def generate_board(split_list, all_paths):
+
+
+
 all_paths, combination = generate_hamiltonian_paths(board_rows, board_cols, combination)
+board, split_list = fill_board(board, combination,all_paths)
+#print (split_list)
+#game_board = generate_board(split_list, all_paths)
+
 
 # Print the first path
-print(all_paths[0])
+#print(all_paths[0])
+print (board)
