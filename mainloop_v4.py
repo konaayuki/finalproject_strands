@@ -46,13 +46,15 @@ def datamuse_api_get(query):
     response = requests.get(f'{url}/words?ml={query}&sp>???&max=25')
     return response.json()
     
+global_select_theme = None
 #getting related words from a theme
 def get_related_words():
+    global global_select_theme
     #chooses a random theme from a created list
     themes = ['music', 'literature', 'weather', 'school', 'technology', 'city', 'farm', 'shopping', 'biomes', 'beach', 'puzzles', 'party', 'sports','halloween']
-    random_theme = random.choice(themes)
+    global_select_theme = random.choice(themes)
         #debug: print(random_theme)
-    retrieved = datamuse_api_get(random_theme)
+    retrieved = datamuse_api_get(global_select_theme)
         #debug: print(retrieved)
     #prints out retrieved - a list of dictionaries
     
@@ -64,7 +66,7 @@ def get_related_words():
     #limit word length and omit non alphabetic symbols
     related_words_fin = [term for term in related_words_prot if len(term) <= 10 and term.isalpha()]
         #debug: print(related_words_fin)
-    return random_theme, related_words_fin
+    return related_words_fin
 
 #creating text file for retrieved words
 def creating_word_list_file(theme, related_words):
@@ -107,11 +109,15 @@ def generate_random_combination(list, target_length):
     return combination
 
 #running the combination system
-def find_words_by_count():
-    file_path = creating_word_list_file(*get_related_words())
-    list = load_file(file_path)
-    combination = generate_random_combination(list, 25)
-    print(combination)
+#def find_words_by_count():
+    #random_theme, related_words = get_related_words()
+related_words = get_related_words()
+file_path = creating_word_list_file(global_select_theme, related_words)
+#global_select_theme = get_related_words()
+#file_path = creating_word_list_file(global_select_theme)
+list = load_file(file_path)
+combination = generate_random_combination(list, 25)
+print(combination)
 
 
 ############################generating letters in board
@@ -179,13 +185,13 @@ def draw_clicked_letters(screen, clicked_letters, font, x, y):
     text_surface = font.render(display_text, True, BLACK)
     screen.blit(text_surface, (x, y))
 
-def main(random_theme):
+def main():
     game_board = generate_board()
     clicked_cells = set()
     last_clicked_cell = None # to track whether next letter is adjacent
     clicked_letters = [] # tracking clicked letters for display
 
-    find_words_by_count()
+    global global_select_theme
 
     running = True
     while running:
@@ -227,9 +233,12 @@ def main(random_theme):
 
         screen.fill(WHITE)
 
-        #generated theme display textbox
+      
+        
 
-        draw_textbox(170, 324, 280, 100, random_theme, 40, WHITE, border=True) #f'{random_theme}'
+        #generated theme display textbox
+        
+        draw_textbox(170, 324, 280, 100, global_select_theme, 40, WHITE, border=True) #f'{random_theme}'
         #'THEME' textbox
         draw_textbox(170, 300, 280, 24, 'THEME', 22, LIGHTBLUE, border=False)
         #strands board!
@@ -240,26 +249,12 @@ def main(random_theme):
         pygame.display.flip()
         clock.tick(30)
 
-    """
-    dictionary api:
-    """
 
 
-
-    """
-    starting off the crossword:
-    includes random textfile generation AND selecting words from file into a strand
-    """
-        #random generation of textfile
-
-
-    """
-    general other syntax for running game
-    """
-        #update display: pygame.display.flip()
-        #control frame rate: pygame.time.Clock().tick(60)
     pygame.quit()
 
 if __name__ == '__main__':
-    random_theme, _ = get_related_words()
-    main(random_theme)
+    
+    main()
+   
+    
