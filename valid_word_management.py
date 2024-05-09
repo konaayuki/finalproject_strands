@@ -4,7 +4,7 @@ import nltk #natural lanaguage toolkit
 nltk.download('words')
 from nltk.corpus import words
 
-test_list = ['SMORE', 'ROAST', 'CRISP', 'BED', 'CARCASS']
+test_list = ['GRACE', 'CHOCOLATE', 'BAG', 'STORE']
 
 def split_words(test_list):
 
@@ -22,7 +22,8 @@ def valid_words(individual_letter):
     
     possible_words = [] #defines an empty list for the possible words
 
-    for word in all_words: #iterates over each word in all_words list
+    #for word in all_words: #iterates over each word in all_words list
+    for word in all_words:
        
         word_count = Counter(word) 
 
@@ -32,7 +33,8 @@ def valid_words(individual_letter):
             possible_words.append(word)
             #^if yes, add it to the list
 
-    return list(set(possible_words))
+    #return list(set(possible_words))
+    return list(possible_words)
 
 individual_letter=split_words(test_list)
 #print (individual_letter)
@@ -44,3 +46,8 @@ possible_words = [word.upper() for word in possible_words] #convert to uppercase
 for i in range (len(test_list)):
     if test_list[i] in possible_words:
         print (test_list[i])
+    else:
+        print ('hint')
+        #go towards hint
+
+        
