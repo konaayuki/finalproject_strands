@@ -7,12 +7,13 @@ import and visual set up:
 import random
 import string
 import pygame
+
 pygame.init()
 pygame.font.init()
 
 #set up screen
 screen_width = 1200
-screen_height = 850
+screen_height = 750
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('Strands')
 clock = pygame.time.Clock()
@@ -26,11 +27,11 @@ YELLOW = (255, 217, 46)
 BOARDGRAY = (128, 128, 128)
 
 #define grid (with location)
-board_cols = 6
-board_rows = 8
+board_cols = 5
+board_rows = 5
 font_size = 32
 board_width = 420
-board_height = 560
+board_height = 420
 letter_font = pygame.font.SysFont('any_font', 32)
 
 ###taken from click_function.py; edited some variables
@@ -74,10 +75,6 @@ def draw_board(screen, board, clicked_cells, font, clicked_letters):
             letter_alignment = letter_surface.get_rect(center = letter_dim.center)
             screen.blit(letter_surface, letter_alignment)
 
-
-#i probably have to define the textfile and word strands here?
-
-
 #creating the textbox
 #given textbox text
 def draw_textbox(x, y, width, height, text, font_size, rectcolor, border=True):
@@ -92,7 +89,20 @@ def draw_textbox(x, y, width, height, text, font_size, rectcolor, border=True):
     screen.blit(the_text, text_alignment)
                 
 
+#i probably have to define the textfile and word strands here?
+#put dictionary api HERE
+
+#put randomtextfiles HERE
+#creating a randomized word list from a theme textfile
+#basic function to calculate the total letter count
+
 #text [blank] out of [blank] words found
+"""
+for word in selected_words:
+    words_left = 
+"""
+
+
 
 """
 useful syntax?
@@ -133,8 +143,8 @@ def main():
                 if event.button in (4, 5):
                     continue
                 x_hit, y_hit = pygame.mouse.get_pos()
-                col = (x_hit - 600) // 70 #1-6
-                row = (y_hit - 145) // 70 #1-8
+                col = (x_hit - 600) // 84 #1-6
+                row = (y_hit - 145) // 84 #1-8
                 #clicked_cells.add((row,col))
 
                 
@@ -170,6 +180,7 @@ def main():
                     continue
             elif event.type == pygame.MOUSEWHEEL:
                 continue
+
 
         screen.fill(WHITE)
 
