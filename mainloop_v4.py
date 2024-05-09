@@ -211,24 +211,30 @@ def fill_board(board, combination,all_paths):
         x,y = all_paths[0][i]
         board[x][y] = split_list[i]
 
-    return board
+    return board, split_list
 
-def generate_hamiltonian_paths(board_rows, board_cols):
+def generate_hamiltonian_paths(board_rows, board_cols,combination):
     paths = []
     start_x, start_y = random.randint(0, board_rows-1), random.randint(0, board_cols-1) #randomly generate starting position for the path
     find_paths(start_x, start_y, board_rows, board_cols, [], set(), paths)
-    return paths, (start_x, start_y)
+    return paths, combination
 
 def main(random_theme):
-    game_board = generate_board()
+    board = [[ '_' for i in range(board_rows)] for j in range(board_cols)]
+    combination = find_words_by_count()
+    all_paths, combination = generate_hamiltonian_paths(board_rows, board_cols, combination)
+    board, split_list = fill_board(board, combination,all_paths)
+
+    #game_board = generate_board()
     clicked_cells = set()
     last_clicked_cell = None # to track whether next letter is adjacent
     clicked_letters = [] # tracking clicked letters for display
 
     board = [[ '_' for i in range(5)] for j in range(5)]
-    combination = find_words_by_count()
-    all_paths, (start_x,start_y)  = generate_hamiltonian_paths(board_rows, board_cols)
+    all_paths,combination  = generate_hamiltonian_paths(board_rows, board_cols,combination)
     fill_board(board, combination,all_paths)
+
+    #print (all_paths[0]) #it is properly generating the path
 
     running = True
     while running:
@@ -257,7 +263,7 @@ def main(random_theme):
                             abs(last_clicked_cell[1] - col) <= 1):
                                 
                             clicked_cells.add((row, col))
-                            clicked_letters.append(game_board[row][col])
+                            clicked_letters.append(board[row][col])
                             last_clicked_cell = (row, col)
 
                             #print(f"valid click") #debug
@@ -276,7 +282,7 @@ def main(random_theme):
         #'THEME' textbox
         draw_textbox(170, 300, 280, 24, 'THEME', 22, LIGHTBLUE, border=False)
         #strands board!
-        draw_board(screen, game_board, clicked_cells, letter_font)
+        draw_board(screen, board, clicked_cells, letter_font)
         #calling clicked letters to display them 
         draw_clicked_letters(screen, clicked_letters, letter_font, 600, 100)
 
