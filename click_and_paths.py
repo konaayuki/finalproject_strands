@@ -75,7 +75,15 @@ def draw_board(screen, board, clicked_cells, font, clicked_letters):
   screen.blit(text_surface, (10, 10))
 
   clicked_word = ''.join(clicked_letters)
-  valid_word = clicked_word in test_list
+  
+  valid_word = clicked_word in test_list #checks if clicked_word is in test_list (True or False)
+  
+  #valid/invalid cases (i.e. 2 ways to get one word)
+  valid_path = False
+  for path in all_paths:
+      path_order = [board[row][col] for row,col in path]
+      if clicked_word == ''.join(path_order):
+          valid_path = True
 
   # drawing letters in the correct spaces
   for row_index in range(board_rows): 
@@ -88,10 +96,9 @@ def draw_board(screen, board, clicked_cells, font, clicked_letters):
       cell_rect = pygame.Rect(x, y, cell_width, cell_height)
 
       # drawing gray if clicked 
-
       if (row_index, col_index) in clicked_cells: 
-        if valid_word:
-            pygame.draw.rect(screen, (170,220,230), cell_rect)
+        if valid_word and valid_path: #if true (it is a valid word)
+            pygame.draw.rect(screen, (170,220,230), cell_rect) #turn blue
         else:
             pygame.draw.rect(screen, gray, cell_rect)
 

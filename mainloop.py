@@ -32,6 +32,7 @@ board_rows = 5
 font_size = 32
 board_width = 420
 board_height = 420
+letter_display_height = 50 
 letter_font = pygame.font.SysFont('any_font', 32)
 
 ###taken from click_function.py; edited some variables
@@ -41,14 +42,9 @@ def generate_board():
     return[[random.choice(all_letters) for _ in range (board_cols)] for _ in range(board_rows)]
 
 #formatting the cells of the board
-def draw_board(screen, board, clicked_cells, font, clicked_letters):
+def draw_board(screen, board, clicked_cells, font):
     cell_width = board_width // board_cols
     cell_height = board_height // board_rows
-
-    #displaying letters at the top of the screen
-    display_text = ''.join(clicked_letters)
-    display_text_surface = letter_font.render(display_text, True, BLACK)
-    screen.blit(display_text_surface, (600, 120))
 
     #added on by yuki for location of board
     start_board_x = 600
@@ -59,42 +55,28 @@ def draw_board(screen, board, clicked_cells, font, clicked_letters):
         for col_index in range(board_cols):
             letter = board[row_index][col_index]
             x = start_board_x + col_index * cell_width
-            y = start_board_y + row_index * cell_height
-
-            #rectangular coordinates for letter fill: base code below are all from click_function.py
+            y = start_board_y + row_index * cell_height 
             cell_rect = pygame.Rect(x, y, cell_width, cell_height)
-
-            letter_dim = pygame.draw.rect(screen, BOARDGRAY, cell_rect)
-            #drawing the gray when clicked
-            if (row_index, col_index) in clicked_cells:
-                letter_dim
-            else:
-                pygame.draw.rect(screen, WHITE, cell_rect)
-            #center alignment added by yuki
+            # changed if statement a bit for gray if clicked
+            pygame.draw.rect(screen, BOARDGRAY if (row_index, col_index) in clicked_cells else WHITE, cell_rect)
             letter_surface = letter_font.render(letter, True, BLACK)
-            letter_alignment = letter_surface.get_rect(center = letter_dim.center)
-            screen.blit(letter_surface, letter_alignment)
+            screen.blit(letter_surface, letter_surface.get_rect(center=cell_rect.center))
 
-#creating the textbox
-#given textbox text
+#i probably have to define the textfile and word strands here?
+
+
 def draw_textbox(x, y, width, height, text, font_size, rectcolor, border=True):
     theme_font = pygame.font.SysFont('any_font', font_size)
     the_text = theme_font.render(text, True, BLACK)
-    textbox_dim = pygame.Rect(x, y, width, height)
-    textbox_rect = pygame.draw.rect(screen, rectcolor, textbox_dim)
+    textbox_rect = pygame.Rect(x, y, width, height)
+    pygame.draw.rect(screen, rectcolor, textbox_rect)
     #to create border for one box
     if border:
-        pygame.draw.rect(screen, GRAY, textbox_dim, 2)
-    text_alignment = the_text.get_rect(center = textbox_dim.center) #help by chatGPT
-    screen.blit(the_text, text_alignment)
+        pygame.draw.rect(screen, GRAY, textbox_rect, 2)
+    text_alignment = the_text.get_rect(center = textbox_rect.center) #help by chatGPT
+    screen.blit(the_text, the_text.get_rect(center = textbox_rect.center))
                 
 
-#i probably have to define the textfile and word strands here?
-#put dictionary api HERE
-
-#put randomtextfiles HERE
-#creating a randomized word list from a theme textfile
-#basic function to calculate the total letter count
 
 #text [blank] out of [blank] words found
 """
@@ -121,65 +103,46 @@ useful syntax?
 """
 running the game loop:
 """
-def main():
-    clock = pygame.time.Clock()
+# new function to draw clicked letters at the top of the board 
+def draw_clicked_letters(screen, clicked_letters, font, x, y):
+    display_text = ''.join(clicked_letters)
+    text_surface = font.render(display_text, True, BLACK)
+    screen.blit(text_surface, (x, y))
 
+def main():
     game_board = generate_board()
     clicked_cells = set()
-    clicked_letters = [] #tracking clicked letters to display
-    last_clicked_cell = None #in tracking whether next clicked is adjacent 
-
+    last_clicked_cell = None # to track whether next letter is adjacent
+    clicked_letters = [] # tracking clicked letters for display
 
     running = True
     while running:
-
         for event in pygame.event.get():
 
             if event.type == pygame.QUIT:
                 running = False
-            #added click_function.py
+        #added click_function.py
+        # added absolute value function
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                #to stop it from reacting when it scrolls
-                if event.button in (4, 5):
-                    continue
                 x_hit, y_hit = pygame.mouse.get_pos()
-                col = (x_hit - 600) // 84 #1-6
-                row = (y_hit - 145) // 84 #1-8
-                #clicked_cells.add((row,col))
+                col = (x_hit - 600) // (board_width // board_cols)
+                row = (y_hit - 145) // (board_height // board_rows)
 
-                
-                if 0 <= row < board_rows and 0 <= col < board_cols:
-                    #condition using absolute value to check distance between clicks
+                #print("Clicked cell (row, col):", (row, col))  # Print clicked cell coordinates for debugging
+                if 0 <= row < board_rows and 0 <= col < board_cols: 
+                    # condition using absolute value to check distance between clicks
                     if last_clicked_cell is None or (abs(last_clicked_cell[0] - row) <= 1 and abs(last_clicked_cell[1] - col) <= 1):
-                        if (row, col) not in clicked_cells:
-                            clicked_cells.add((row,col))
-                            clicked_letters.append(game_board[row][col])
-                            last_clicked_cell = (row, col)
-                            #print(f'valid check')
-                        #else: 
-                            #print('cell already clicked')
-                    #else:
-                        #print(f'not a valid check')
-                else:
+                        clicked_cells.add((row, col))
+                        clicked_letters.append(game_board[row][col])
+                        last_clicked_cell = (row, col)
+                        #print(f"valid click") #debug
+                    #else: 
+                        #print(f'not a valid click')
+                else: # clear board if player clicks outside of cells
                     clicked_letters.clear()
                     clicked_cells.clear()
                     last_clicked_cell = None
-                    #print('cleared board')
-                    
-                """
-                print("Clicked cell (row, col):", (row, col))  # Print clicked cell coordinates for debugging
-
-                if 0 <= row < board_rows and 0 <= col < board_cols:
-                    clicked_cells.add((row, col))  # Only add clicked cells within board dimensions
-                else:
-                    print("Clicked outside of board range.")
-                """
-            #to stop it from reacting when it scrolls
-            elif event.type == pygame.MOUSEBUTTONUP:
-                if event.button in (4, 5):
-                    continue
-            elif event.type == pygame.MOUSEWHEEL:
-                continue
+                    print("Cleared board") #debug
 
 
         screen.fill(WHITE)
@@ -189,7 +152,9 @@ def main():
         #'THEME' textbox
         draw_textbox(170, 300, 280, 24, 'THEME', 22, LIGHTBLUE, border=False)
         #strands board!
-        draw_board(screen, game_board, clicked_cells, letter_font, clicked_letters)
+        draw_board(screen, game_board, clicked_cells, letter_font)
+        #calling clicked letters to display them 
+        draw_clicked_letters(screen, clicked_letters, letter_font, 600, 100)
 
         pygame.display.flip()
         clock.tick(30)
