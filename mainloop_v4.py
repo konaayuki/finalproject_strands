@@ -43,13 +43,13 @@ letter_font = pygame.font.SysFont('any_font', 32)
 #limited to words > 3 letters
 def datamuse_api_get(query):
     url = 'https://api.datamuse.com'
-    response = requests.get(f'{url}/words?ml={query}&sp>???&max=50')
+    response = requests.get(f'{url}/words?ml={query}&sp>???&max=25')
     return response.json()
     
 #getting related words from a theme
 def get_related_words():
     #chooses a random theme from a created list
-    themes = ['music', 'literature', 'weather', 'school', 'technology', 'city', 'farm', 'shopping', 'biomes', 'beach', 'puzzle+games', 'party+goods', 'sports']
+    themes = ['music', 'literature', 'weather', 'school', 'technology', 'city', 'farm', 'shopping', 'biomes', 'beach', 'puzzles', 'party', 'sports','halloween']
     random_theme = random.choice(themes)
         #debug: print(random_theme)
     retrieved = datamuse_api_get(random_theme)
