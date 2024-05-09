@@ -49,5 +49,3 @@ for i in range (len(test_list)):
     else:
         print ('hint')
         #go towards hint
-
-        
