@@ -1,9 +1,8 @@
 #creating main loop
-#starting to put everything together
+
 """
 import and visual set up:
 """
-#import and initialize
 import random
 import requests
 import string
@@ -43,7 +42,7 @@ letter_font = pygame.font.SysFont('any_font', 32)
 #limited to words > 3 letters
 def datamuse_api_get(query):
     url = 'https://api.datamuse.com'
-    response = requests.get(f'{url}/words?ml={query}&sp>???&max=25')
+    response = requests.get(f'{url}/words?rel_trg={query}&sp>???&max=50')
     return response.json()
     
 global_select_theme = None
@@ -53,19 +52,19 @@ def get_related_words():
     #chooses a random theme from a created list
     themes = ['music', 'literature', 'weather', 'school', 'technology', 'city', 'farm', 'shopping', 'biomes', 'beach', 'puzzles', 'party', 'sports','halloween']
     global_select_theme = random.choice(themes)
-        #debug: print(random_theme)
+    #print(random_theme)    #debug
     retrieved = datamuse_api_get(global_select_theme)
-        #debug: print(retrieved)
+    #print(retrieved)   #debug
     #prints out retrieved - a list of dictionaries
     
     #extract values of the 'word' key in each dictionary
     #put them into list of strings
     related_words_prot = [dic['word'] for dic in retrieved]
-        #debug:print(related_words_prot)
+    #print(related_words_prot)   #debug
 
     #limit word length and omit non alphabetic symbols
     related_words_fin = [term for term in related_words_prot if len(term) <= 10 and term.isalpha()]
-        #debug: print(related_words_fin)
+    #print(related_words_fin)    #debug
     return related_words_fin
 
 #creating text file for retrieved words
@@ -95,7 +94,7 @@ def generate_random_combination(list, target_length):
         if current_length + len(term) <= target_length:
             combination.append(term)
             current_length += len(term)
-            list.remove(term) #remove once used terms to prevent repeats
+            list.remove(term)
         else:
             remaining_length = target_length - current_length
             shorter_word = [w for w in list if len(w) <= remaining_length]
@@ -113,8 +112,6 @@ def generate_random_combination(list, target_length):
     #random_theme, related_words = get_related_words()
 related_words = get_related_words()
 file_path = creating_word_list_file(global_select_theme, related_words)
-#global_select_theme = get_related_words()
-#file_path = creating_word_list_file(global_select_theme)
 list = load_file(file_path)
 combination = generate_random_combination(list, 25)
 print(combination)
@@ -160,20 +157,16 @@ def draw_textbox(x, y, width, height, text, font_size, rectcolor, border=True):
     screen.blit(the_text, the_text.get_rect(center = textbox_rect.center))
             
 #text [blank] out of [blank] words found
+def checking_valid_words():
+    return 
 
-
-"""
-useful syntax?
-    display.set.mode(): sets screen size, returns surface object we assign to variable screen
-        screen = display.set.mode((640, 240))
-    write colors using capitals to keep it constant
-    screen.fill(): fill(color) fills whole screen with specified color
-    pygame.display.update(): to show the changes
-    event.type
-    event.key
-    from pygame.locals import *: to import all the keys, 280 constants defined in pygame
-    pygame.display.set_caption(title): change caption title of the application window
-"""
+#list = combination
+def count_total_words():
+    total_words = 0
+    for word in combination:
+        each_word = combination.split()
+        total_words += len(each_word)
+    return total_words
 
 
 """
