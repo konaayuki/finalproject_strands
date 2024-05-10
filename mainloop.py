@@ -13,7 +13,7 @@ pygame.font.init()
 
 #set up screen
 screen_width = 1200
-screen_height = 850
+screen_height = 750
 screen = pygame.display.set_mode((screen_width, screen_height))
 pygame.display.set_caption('Strands')
 clock = pygame.time.Clock()
@@ -27,11 +27,11 @@ YELLOW = (255, 217, 46)
 BOARDGRAY = (128, 128, 128)
 
 #define grid (with location)
-board_cols = 6
-board_rows = 8
+board_cols = 5
+board_rows = 5
 font_size = 32
 board_width = 420
-board_height = 560
+board_height = 420
 letter_display_height = 50 
 letter_font = pygame.font.SysFont('any_font', 32)
 
@@ -79,6 +79,12 @@ def draw_textbox(x, y, width, height, text, font_size, rectcolor, border=True):
 
 
 #text [blank] out of [blank] words found
+"""
+for word in selected_words:
+    words_left = 
+"""
+
+
 
 """
 useful syntax?
@@ -122,21 +128,22 @@ def main():
                 col = (x_hit - 600) // (board_width // board_cols)
                 row = (y_hit - 145) // (board_height // board_rows)
 
-                print("Clicked cell (row, col):", (row, col))  # Print clicked cell coordinates for debugging
+                #print("Clicked cell (row, col):", (row, col))  # Print clicked cell coordinates for debugging
                 if 0 <= row < board_rows and 0 <= col < board_cols: 
                     # condition using absolute value to check distance between clicks
                     if last_clicked_cell is None or (abs(last_clicked_cell[0] - row) <= 1 and abs(last_clicked_cell[1] - col) <= 1):
                         clicked_cells.add((row, col))
                         clicked_letters.append(game_board[row][col])
                         last_clicked_cell = (row, col)
-                        print(f"valid click") #debug
-                    else: 
-                        print(f'not a valid click')
+                        #print(f"valid click") #debug
+                    #else: 
+                        #print(f'not a valid click')
                 else: # clear board if player clicks outside of cells
                     clicked_letters.clear()
                     clicked_cells.clear()
                     last_clicked_cell = None
                     print("Cleared board") #debug
+
 
         screen.fill(WHITE)
 

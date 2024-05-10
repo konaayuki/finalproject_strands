@@ -27,8 +27,8 @@ YELLOW = (255, 217, 46)
 BOARDGRAY = (128, 128, 128)
 
 #define grid (with location)
-board_cols = 6
-board_rows = 8
+board_cols = 5
+board_rows = 5
 font_size = 32
 board_width = 420
 board_height = 560
@@ -57,6 +57,7 @@ def draw_board(screen, board, clicked_cells, font):
             x = start_board_x + col_index * cell_width
             y = start_board_y + row_index * cell_height 
             cell_rect = pygame.Rect(x, y, cell_width, cell_height)
+            
             # changed if statement a bit for gray if clicked
             pygame.draw.rect(screen, BOARDGRAY if (row_index, col_index) in clicked_cells else WHITE, cell_rect)
             letter_surface = letter_font.render(letter, True, BLACK)
@@ -124,19 +125,25 @@ def main():
 
                 print("Clicked cell (row, col):", (row, col))  # Print clicked cell coordinates for debugging
                 if 0 <= row < board_rows and 0 <= col < board_cols: 
-                    # condition using absolute value to check distance between clicks
-                    if last_clicked_cell is None or (abs(last_clicked_cell[0] - row) <= 1 and abs(last_clicked_cell[1] - col) <= 1):
-                        clicked_cells.add((row, col))
-                        clicked_letters.append(game_board[row][col])
-                        last_clicked_cell = (row, col)
-                        print(f"valid click") #debug
-                    else: 
-                        print(f'not a valid click')
-                else: # clear board if player clicks outside of cells
-                    clicked_letters.clear()
-                    clicked_cells.clear()
-                    last_clicked_cell = None
-                    print("Cleared board") #debug
+                        if (row, col) == last_clicked_cell: #to reset and try a new word (user initiated by clicking the same last letter twice)
+                            clicked_cells.clear()
+                            clicked_letters.clear()
+                        else:
+                            
+                            # condition using absolute value to check distance between clicks
+                            if last_clicked_cell is None or (
+                                abs(last_clicked_cell[0] - row) <= 1 and
+                                abs(last_clicked_cell[1] - col) <= 1):
+                                
+                                clicked_cells.add((row, col))
+                                clicked_letters.append(game_board[row][col])
+                                last_clicked_cell = (row, col)
+
+                                print(f"valid click") #debug
+                            else: 
+                                print(f'not a valid click')
+                else:
+                       print("Cleared board") #debug
 
         screen.fill(WHITE)
 
@@ -163,7 +170,6 @@ def main():
     includes random textfile generation AND selecting words from file into a strand
     """
         #random generation of textfile
-
 
 
     """
