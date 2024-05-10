@@ -1,4 +1,8 @@
-#current state: enters double click as letter tracked in clicked_letters, does not clear board when clicked elsewhere
+# current state: enters double click as letter tracked in clicked_letters,
+# does not clear board when clicked elsewhere,
+# enters any letter, not just adjacent, into clicked letters
+# does not seem to check against API at all 
+
 """
 import and visual set up:
 """
@@ -7,6 +11,8 @@ import random
 import requests
 import string
 import pygame
+import enchant
+
 
 pygame.init()
 pygame.font.init()
@@ -36,12 +42,17 @@ board_height = 420
 letter_font = pygame.font.SysFont('any_font', 32)
 
 #definitions for hint button: 
-hint_button_active = False 
+#hint_button_active = False 
 #hint_active = False 
-hinted_cells = [] # to highlight hinted cells 
-correct_words = [] # storing correct but non-theme words
-current_hint_word = None
-hint_button_rect = pygame.Rect(50, 650, 200, 50)
+#hinted_cells = [] # to highlight hinted cells 
+
+is_valid_word = [] # storing correct but non-theme words found
+is_theme_word = [] # storing theme words found
+correct_indices = [] # storing indices of the cells of correct but non-theme words for a possible hint button
+theme_indices = [] # storing indices of the cells of theme words to highlight the word
+
+#current_hint_word = None
+#hint_button_rect = pygame.Rect(50, 650, 200, 50)
 
 ############################accessing datamuse api and word list generation
 
@@ -111,20 +122,40 @@ def find_words_by_count():
     return combination
 
 # function to check whether in list/valid word 
+# referenced geeks for geeks 
 
-def check_word(word): 
-    url_2 = f'https://api.datamuse.com/words?sp={word}&md=d&max=1'
+
+# this functions tracks whether a word matches any correct word in the english language and if it matches words in the theme 
+# this function 
+def check_word(complete_word, words): 
+    url_2 = f'https://api.datamuse.com/words?sp={complete_word}&md=d&max=1'
     response = requests.get(url_2).json() 
-    is_valid = bool(response) # word is valid if any response from API 
+    #is_valid_word = [] - these are defined globally now 
+   # is_theme_word = []
+    dict = enchant.Dict("en_US")
+    # possibly here add in highlight code to highlight blue? 
+    for iter in complete_word: # for the variable storing the string complete word after player double clicks
+        if dict.check(complete_word) == True and complete_word not in words: 
+            is_valid_word.append(complete_word)
+            # append the indices? 
+        elif dict.check(complete_word) == True and complete_word in words:
+            is_theme_word.append(complete_word)
+            # append the indices?
+        else: 
+            pass
+    return is_valid_word, is_theme_word
+
+            # append to a list for valid words 
+            
+
+    #is_valid = bool(response) # word is valid if any response from API. 
     # locates words in combination list 
-    is_theme_word = any(word == item['word'] for item in combination) # check the logic here!! 
-    return is_valid, is_theme_word 
+  
 
                                                 
 
 def generate_board():
     all_letters = string.ascii_uppercase
-    print('this runs')
     return[[random.choice(all_letters) for _ in range (board_cols)] for _ in range(board_rows)]
 
 #formatting the cells of the board
@@ -187,57 +218,62 @@ def draw_clicked_letters(screen, clicked_letters, font, x, y):
     text_surface = font.render(display_text, True, BLACK)
     screen.blit(text_surface, (x, y))
 
+######################################################################################################
+
+# commented code below is attempt at creating hint button (may be implemented later):
+
 # visualizing hint button
-def draw_hint_button(screen, active, words_until_hint):
-    hint_button_color = LIGHTBLUE if active else GRAY 
-    pygame.draw.rect(screen, hint_button_color, hint_button_rect)
+#def draw_hint_button(screen, active, words_until_hint):
+   # hint_button_color = LIGHTBLUE if active else GRAY 
+   # pygame.draw.rect(screen, hint_button_color, hint_button_rect)
     # display number of correct words until hint on hint button 
-    hint_text_content = "Hint" if active else f"{words_until_hint} words until hint"
-    hint_text = letter_font.render(hint_text_content, True, BLACK) 
-    screen.blit(hint_text, hint_button_rect.center)
-    return hint_button_rect
+   # hint_text_content = "Hint" if active else f"{words_until_hint} words until hint"
+   # hint_text = letter_font.render(hint_text_content, True, BLACK) 
+   # screen.blit(hint_text, hint_button_rect.center)
+   # return hint_button_rect
 
 # updating progress for hint button
-def update_hint_progress(): 
+#def update_hint_progress(): 
     # hint button becomes active when three correct word guesses
-    words_until_hint = 3 - len(correct_words)
-    hint_button_active = words_until_hint <= 0
-    draw_hint_button(screen, hint_button_active, words_until_hint)
+   # words_until_hint = 3 - len(correct_words)
+   # hint_button_active = words_until_hint <= 0
+   # draw_hint_button(screen, hint_button_active, words_until_hint)
 
 # calling this function in main loop when the hint button is activated 
 # this function should, when the hint button is active, highlight a theme word blue 
-def hint_cell_interaction(game_board, combination, row, col, hint_button_active):
-    hint_cells = [] # hint cells stores cells of word from combination used as hint 
-    for word in combination: 
-        for row_index, row in enumerate(game_board):
-            for col_index, letter in enumerate(row): 
-                if letter in word:
-                    hint_cells.append((row_index, col_index))
-    for row, col in hint_cells: 
-        if hint_button_active: 
+#def hint_cell_interaction(game_board, combination, row, col, hint_button_active):
+    #hint_cells = [] # hint cells stores cells of word from combination used as hint 
+    #for word in combination: # check logic 
+        #for row_index, row in enumerate(game_board):
+            #for col_index, letter in enumerate(row): 
+                #if letter in word:
+                    #hint_cells.append((row_index, col_index))
+    #or row, col in hint_cells: 
+        #if hint_button_active: 
         # copy paste code from above to pass cell_rect in this function - does not work otherwise
-            start_board_x = 600
-            start_board_y = 145
-            cell_width = board_width // board_cols
-            cell_height = board_height // board_rows
-            x = start_board_x + col * cell_width
-            y = start_board_y + row * cell_height 
-            cell_rect = pygame.Rect(x, y, cell_width, cell_height)
-            pygame.draw.rect(screen, LIGHTBLUE, cell_rect, 5) 
+            #start_board_x = 600
+           # start_board_y = 145
+           # cell_width = board_width // board_cols
+            #cell_height = board_height // board_rows
+           # x = start_board_x + col * cell_width
+           # y = start_board_y + row * cell_height 
+           # cell_rect = pygame.Rect(x, y, cell_width, cell_height)
+           # pygame.draw.rect(screen, LIGHTBLUE, cell_rect, 5) 
         
-        return hint_cells
-
+       # return hint_cells
+#######################################################################################################
 
 def main():
     theme, words = get_related_words() # calling get related words
     game_board = generate_board() # generating board
-    clicked_cells = set() # to track any clicked cell
+    clicked_cells_str = set() # to track any clicked cell (str) 
     last_clicked_cell = None # to track whether next letter is adjacent
     clicked_letters = [] # tracking clicked letters to display them up top 
-    hint_button_active = False # initializing hint button within loop
-    correct_words = [] # tracking words that are correct in general 
-    theme_words = [] # tracking theme words 
+    # hint_button_active = False # initializing hint button within loop
     used_letters = set() # tracking letters that are already in guessed words
+    row = -1
+    col = -1
+    cell_index = set() # to track index of clicked cells 
 
     screen.fill(WHITE)
     #update_hint_progress()  - call later in game 
@@ -249,8 +285,6 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-        #added click_function.py
-        # added absolute value function
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 #if event.button in (1, 3): # left or right click
                 # tracking position of mouse
@@ -258,62 +292,74 @@ def main():
                     col = (x_hit - 600) // (board_width // board_cols)
                     row = (y_hit - 145) // (board_height // board_rows)
 
-                    if hint_button_rect.collidepoint(x_hit, y_hit): # if hint button is clicked
-                        if hint_button_active: # if hint button is active 
-                            print("hint button active") #debug 
+                    # HINT CODE TO BE IMPLEMENTED LATER
+
+                    #if hint_button_rect.collidepoint(x_hit, y_hit): # if hint button is clicked
+                        #if hint_button_active: # if hint button is active 
+                           # print("hint button active") #debug 
                             # calling hint_cell_interaction to highlight hint button
-                            hint_cell_interaction(game_board, combination, row, col, hint_button_active)
+                           # hint_cell_interaction(game_board, combination, row, col, hint_button_active)
                             # calling update hint progress in order to update hint progress 
-                            update_hint_progress()
+                           # update_hint_progress()
+                           # empty list with x, y, locations of buttons highlighted 
+                           # list of colors assigned to new word 
                             
-                    # handling clicks on cells 
-                    if 0 <= row < board_rows and 0 <= col < board_cols: # check for valid click within cell area on board
-                        cell_clicked = (row, col)
+                # handling clicks on cells 
+                    # check for valid click within cell area on board
+                    if 0 <= row < board_rows and 0 <= col < board_cols: 
                         # making sure that the next click is adjacent to the last click 
                         if last_clicked_cell is None or (
                             abs(last_clicked_cell[0] - row) <= 1 and
                             abs(last_clicked_cell[1] - col) <= 1):
-
-                            clicked_cells.add((row, col))
-                            clicked_letters.append(game_board[row][col])
+                            #adding indices of cells already clicked to clicked_cells
+                            cell_index.add((row, col))
 
                             # if a player double clicks a cell, check against API for correctness and theme word 
                             # need to be able to make sure that 
-                            if cell_clicked == last_clicked_cell:
-                                # do not allow the cell to be entered in the thing 
-                                # store the clicked letters so far 
-                                complete_word = ''.join(clicked_cells).lower()
+                            if last_clicked_cell in cell_index:
+                                # disable button at the index of that cell and the already clicked letters - button state disabled
+
+                                # store the clicked letters so far - is clicked_cells_str the right variable? 
+                                complete_word = ''.join(cell_index).lower() # need the str of the values at the indices
                                 if complete_word: 
-                                    is_valid, is_theme_word = check_word(complete_word)
-                                    if is_valid:
+                                    #running check_word for API and dictionary check
+                                    is_valid_word, is_theme_word = check_word(complete_word)
+                                    if is_valid_word:
                                         if is_theme_word: 
+                                            ###############
+                                            #pygame.draw.Font
                                             print("theme word") #debug 
-                                            theme_words.append(complete_word) # track theme words by adding to list
-                                            for letter in complete_word:
+                                            is_theme_word.append(complete_word) # track theme words by adding to list
+                                            for letter in is_theme_word:
                                                 used_letters.add(letter.upper()) # adding to used letters to make sure the word isn't entered again
-                                                pygame.draw.rect(screen, YELLOW, letter, 0) # changing the color to yellow for correct word
                                                 # make these cells unclickable
+
                                             # reset to starting values for next word to be entered
-                                            clicked_cells.clear()
+                                            cell_index.clear()
                                             clicked_letters.clear()
                                             last_clicked_cell = None
-                                        else: 
+                                            complete_word.clear()
+                                        else: # if is valid but not theme 
                                             print("correct but not theme word") # debug
                                             # make this word unguessable again
-                                            correct_words.append(complete_word) # appending to correct word list 
-                                            words_until_hint = words_until_hint - 1 # one less word before hint! 
-                                            for letter in clicked_cells:
+                                            is_valid_word.append(complete_word) # appending to correct word list 
+                                            #words_until_hint = words_until_hint - 1 # one less word before hint! 
+                                            #for letter in cell_index:
                                                 #highlighting light blue for hint
-                                                pygame.draw.rect(screen, LIGHTBLUE, letter, 5)  
+                                                #pygame.draw.rect(screen, LIGHTBLUE, letter, 5) 
+                                            cell_index.clear()
+                                            clicked_letters.clear()
+                                            last_clicked_cell = None  
+                                            complete_word.clear()
                                     else: 
                                         # if word not valid nor a theme word 
                                         print('Invalid word') #debug
-                                        clicked_cells.clear()
+                                        cell_index.clear()
                                         clicked_letters.clear()
                                         last_clicked_cell = None
                         else: 
                             # if click is not on board or adjacent to last clicked letters, it is invalid 
-                            clicked_cells.clear()
+                            cell_index.clear()
                             clicked_letters.clear()
                             last_clicked_cell = None
 
@@ -330,16 +376,15 @@ def main():
         #'THEME' textbox
         draw_textbox(170, 300, 280, 24, 'THEME', 22, LIGHTBLUE, border=False)
         #strands board!
-        draw_board(screen, game_board, clicked_cells, letter_font)
+        draw_board(screen, game_board, clicked_letters, letter_font)
         #calling clicked letters to display them 
         draw_clicked_letters(screen, clicked_letters, letter_font, 600, 50)
-        draw_hint_button(screen, hint_button_active, 3 - len(correct_words))
 
         pygame.display.flip()
         clock.tick(30)
 
     """
-    dictionary api:
+    dictionay api:
     """
 
 
