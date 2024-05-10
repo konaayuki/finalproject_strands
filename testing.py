@@ -1,8 +1,8 @@
 import random
 board_rows = 5
 board_cols = 5
-board = [[ '_' for i in range(board_rows)] for j in range(board_cols)]
 combination = ['WATER', 'ROAST', 'SMORE', 'MARSH', 'SHOES']
+board = [[ '_' for i in range(board_rows)] for j in range(board_cols)]
 def is_valid_move(x, y, board_rows, board_cols, visited):
     return 0 <= x < board_rows and 0 <= y < board_cols and (x, y) not in visited
 
@@ -41,16 +41,7 @@ def generate_hamiltonian_paths(board_rows, board_cols,combination):
     find_paths(start_x, start_y, board_rows, board_cols, [], set(), paths)
     return paths, combination
 
-#def generate_board(split_list, all_paths):
-
-
-
 all_paths, combination = generate_hamiltonian_paths(board_rows, board_cols, combination)
 board, split_list = fill_board(board, combination,all_paths)
-#print (split_list)
-#game_board = generate_board(split_list, all_paths)
 
-
-# Print the first path
-#print(all_paths[0])
-print (board)
+print (all_paths[0])

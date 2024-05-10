@@ -120,9 +120,9 @@ def check_word(word):
 """
 generating board:
 """
-def generate_board():
-    all_letters = string.ascii_uppercase
-    return[[random.choice(all_letters) for _ in range (board_cols)] for _ in range(board_rows)]
+#def generate_board():
+    #all_letters = string.ascii_uppercase
+    #return[[random.choice(all_letters) for _ in range (board_cols)] for _ in range(board_rows)]
 
 #formatting the cells of the board
 def draw_board(screen, board, clicked_cells):
@@ -172,12 +172,59 @@ def draw_clicked_letters(screen, clicked_letters, font, x, y):
     text_surface = font.render(display_text, True, BLACK)
     screen.blit(text_surface, (x, y))
 
+#GENERATING PATHS FUNCTIONS BELOW
+#function to check if the next move in the path is a valid one
+def is_valid_move(x, y, board_rows, board_cols, visited):
+    return 0 <= x < board_rows and 0 <= y < board_cols and (x, y) not in visited
+
+#function to find paths
+def find_paths(x, y, board_rows, board_cols, path, visited, paths):
+    path.append((x, y)) #appends the current position to the path
+    visited.add((x, y)) #adds the current position to the visited list
+
+    if len(path) == board_rows * board_cols: #checks if the length of the path is equal to all the spaces in the grid
+        paths.append(path.copy()) #appends the current path to the path list as it is a valid path
+        return #once a valid path is found, RETURN AND STOP HERE
+        
+    for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1),(-1,-1),(1,1),(1,-1),(-1,1)]: #looks over the 4 possible directions (up/down/left/right)
+        nx, ny = x + dx, y + dy #calculates next direction
+        if is_valid_move(nx, ny, board_rows, board_cols, visited): #checks if it is a valid move
+            find_paths(nx, ny, board_rows, board_cols, path, visited, paths)
     
+    visited.remove((x, y))
+    path.pop()
+
+#function that replaces the spaces on the board with letters in the combination list
+def fill_board(board, combination,all_paths):
+
+    split_list = []
+    print (split_list)
+    print (all_paths[0])
+    
+    for word in combination:
+        for letter in word:
+            split_list.append(letter)
+
+    for i in range (0, len(all_paths[0])): 
+        x,y = all_paths[0][i]
+        board[x][y] = split_list[i]
+
+    return board
+
+def generate_hamiltonian_paths(board_rows, board_cols):
+    paths = []
+    start_x, start_y = random.randint(0, board_rows-1), random.randint(0, board_cols-1) #randomly generate starting position for the path
+    find_paths(start_x, start_y, board_rows, board_cols, [], set(), paths)
+    return paths
+
 """
 running the game loop:
 """
 def main():
-    game_board = generate_board() #generating board
+    board = [[ '_' for i in range(board_rows)] for j in range(board_cols)]
+    all_paths = generate_hamiltonian_paths(board_rows, board_cols)
+    board = fill_board(board, combination,all_paths)
+
     clicked_cells = set() #to track any clicked cell
     last_clicked_cell = None #to track whether next letter is adjacent
     clicked_letters = [] #tracking clicked letters for display
@@ -216,7 +263,7 @@ def main():
                             abs(last_clicked_cell[1] - col) <= 1):
                                 
                             clicked_cells.add((row, col))
-                            clicked_letters.append(game_board[row][col])
+                            clicked_letters.append(board[row][col])
                             last_clicked_cell = (row, col)
         
 
@@ -225,7 +272,7 @@ def main():
         #'THEME' textbox
         draw_textbox(150, 300, 280, 24, 'THEME', 22, LIGHTBLUE, border=False)
         #strands board!
-        draw_board(screen, game_board, clicked_cells)
+        draw_board(screen, board, clicked_cells)
         #calling clicked letters to display them 
         draw_clicked_letters(screen, clicked_letters, letter_font, 600, 100)
         #drawing wordlist
