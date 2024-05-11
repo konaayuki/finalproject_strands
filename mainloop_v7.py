@@ -7,7 +7,7 @@ import pygame
 
 # currently - need to make double click time longer
 # need to make it so that the word clears from the top of board after 
-# double click or 
+# double click or
 
 pygame.init()
 pygame.font.init()
@@ -58,7 +58,7 @@ getting words used in game:
 #limited to words > 3 letters
 def datamuse_api_get(query):
     url = 'https://api.datamuse.com'
-    response = requests.get(f'{url}/words?rel_trg={query}&sp>???&max=100')
+    response = requests.get(f'{url}/words?rel_trg={query}&sp>???&max=30')
     return response.json()
     
 global_select_theme = None
@@ -66,7 +66,7 @@ global_select_theme = None
 def get_related_words():
     global global_select_theme
     #chooses a random theme from a created list
-    themes = ['music', 'literature', 'weather', 'school', 'technology', 'city', 'farm', 'shopping', 'biomes', 'beach', 'puzzles', 'party', 'sports','halloween']
+    themes = ['music', 'literature', 'weather', 'school', 'technology', 'seasons', 'farm', 'shopping', 'biomes', 'beach', 'puzzles', 'christmas', 'sports','halloween']
     global_select_theme = random.choice(themes)
     retrieved = datamuse_api_get(global_select_theme)
     related_words_prot = [dic['word'] for dic in retrieved]
@@ -282,8 +282,12 @@ def main():
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                if os.path.exists(file_path):
+                    os.remove(file_path)
                 running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button in (4, 5):
+                    continue
                 x_hit, y_hit = pygame.mouse.get_pos()
                 col = (x_hit - 600) // (board_width // board_cols)
                 row = (y_hit - 145) // (board_height // board_rows)
