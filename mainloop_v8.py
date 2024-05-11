@@ -8,6 +8,7 @@ import pygame
 # currently - need to make double click time longer
 # need to make it so that the word clears from the top of board after 
 # double click and if the word is 
+# no colors, need to make sure it is tracking indices properly
 
 pygame.init()
 pygame.font.init()
@@ -48,16 +49,6 @@ clicked_cells = set()
 double_click_time = 0 
 last_click_time = 0 
 last_clicked_cell = None
-
-# FOR DRAW_BOARD 
-
-cell_width = board_width // board_cols
-cell_height = board_height // board_rows
-start_board_x = 600
-start_board_y = 145
-
-
-
 
 """
 getting words used in game:
@@ -138,10 +129,17 @@ def check_word(complete_word, board):
     #if dict_checker.check(complete_word):
         global theme_indices
         if complete_word in combination: 
-            # appending theme word to complete word and indices to theme_indices 
             is_theme_word.append(complete_word) 
             word_length = len(complete_word)
-            theme_indices = [i for i in range(len(combination)) if combination[i:i+word_length] == complete_word]
+
+            for row_index, row in enumerate(board):
+                for col_index, letter in enumerate(row):
+                    if col_index + word_length <= len(row):
+                        sliced_word = ''.join(row[col_index:col_index+word_length])
+                        if sliced_word == complete_word:
+                            print("letter matched!")
+                            for i in range(col_index, col_index + word_length):
+                                theme_indices.append((row_index, col_index))
         
         else: 
             print("not a valid word")
@@ -157,30 +155,28 @@ generating board:
 
 #formatting the cells of the board
 def draw_board(screen, board, clicked_cells):
-    #cell_width = board_width // board_cols
-    #cell_height = board_height // board_rows
+    cell_width = board_width // board_cols
+    cell_height = board_height // board_rows
 
     #added on by yuki for location of board
+    start_board_x = 600
+    start_board_y = 145
 
     #drawing letters in correct locations
-    # changed row_index to row 
-
-    
-    for row in range(board_rows):
-        for col in range(board_cols):
-            x = start_board_x + col * cell_width
-            y = start_board_y + row * cell_height
+    for row_index in range(board_rows):
+        for col_index in range(board_cols):
+            letter = board[row_index][col_index]
+            x = start_board_x + col_index * cell_width
+            y = start_board_y + row_index * cell_height 
             cell_rect = pygame.Rect(x, y, cell_width, cell_height)
-            
-            color = WHITE
-            if (row, col) in theme_indices:
-                color = YELLOW 
-            elif (row, col) in clicked_cells:
-                color = GRAY
 
-            pygame.draw.rect(screen, color, cell_rect)
-    
-            letter = board[row][col]
+            # modifying for theme word 
+            if (row_index, col_index) in theme_indices:
+                pygame.draw.rect(screen, YELLOW, cell_rect)
+            else: 
+            #gray if clicked and not in theme_indices
+                pygame.draw.rect(screen, BOARDGRAY if (row_index, col_index) in clicked_cells else WHITE, cell_rect)
+            
             letter_surface = letter_font.render(letter, True, BLACK)
             screen.blit(letter_surface, letter_surface.get_rect(center=cell_rect.center))
 
@@ -260,38 +256,28 @@ def generate_hamiltonian_paths(board_rows, board_cols):
 
 # new function to handle click and check for double click based on time 
 def handle_click(board, col, row): 
-    global last_click_time, clicked_letters, last_clicked_cell, clicked_cells
+    global last_click_time, clicked_letters, last_clicked_cell
 
-    # tracking time of current click
     current_time = pygame.time.get_ticks() 
-    # if click within the board space 
+
     if 0 <= row < board_rows and 0 <= col < board_cols: 
         # making sure that the next click is adjacent to the last click 
         if last_clicked_cell is None or (
             abs(last_clicked_cell[0] - row) <= 1 and
             abs(last_clicked_cell[1] - col) <= 1):
 
-            if current_time - last_click_time < 500: # large margin to detect double click - still have to click fast 
+            if current_time - last_click_time < 500: # large margin to detect double click 
                 complete_word = ''.join(clicked_letters).lower()
-                # entering word into check word function if double clicked
                 check_word(complete_word, board)
                 clicked_letters = [] # clear letters from top of board 
                 last_clicked_cell = None
-                clicked_cells = []
             else: 
-                # should interact with draw_board to turn letters gray
                 clicked_letters.append(board[row][col])
                 last_clicked_cell = (row, col)
-                clicked_cells.append((row, col))
-
-
             last_click_time = current_time # reset 
     else: 
-        # clearing clicked cells if someone clicks elsewhere
         clicked_letters = [] # clear letters from top of board 
         last_clicked_cell = None
-        clicked_cells = []
-        # do I have to call draw_board? 
 
 """
 running the game loop:
@@ -303,18 +289,14 @@ def main():
  
     global global_select_theme
 
+    screen.fill(WHITE)
 
     running = True
     while running:
-
-        pygame.display.flip()
-        draw_board(screen, board, clicked_cells)
-        screen.fill(WHITE)
         
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 x_hit, y_hit = pygame.mouse.get_pos()
                 col = (x_hit - 600) // (board_width // board_cols)

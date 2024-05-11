@@ -127,6 +127,8 @@ def check_word(word):
     is_theme_word = any(word == item['word'] for item in combination) # check the logic here!! 
     return is_valid, is_theme_word 
 
+    return combination
+
 
 """
 generating board:
@@ -281,46 +283,7 @@ def main():
 
                             clicked_cells.add((row, col))
                             clicked_letters.append(game_board[row][col])
-
-                            # if a player double clicks a cell, check against API for correctness and theme word 
-                            # need to be able to make sure that 
-                            if cell_clicked == last_clicked_cell:
-                                # do not allow the cell to be entered in the thing 
-                                # store the clicked letters so far 
-                                complete_word = ''.join(clicked_cells).lower()
-                                if complete_word: 
-                                    is_valid, is_theme_word = check_word(complete_word)
-                                    if is_valid:
-                                        if is_theme_word: 
-                                            print("theme word") #debug 
-                                            theme_words.append(complete_word) # track theme words by adding to list
-                                            for letter in complete_word:
-                                                used_letters.add(letter.upper()) # adding to used letters to make sure the word isn't entered again
-                                                pygame.draw.rect(screen, YELLOW, letter, 0) # changing the color to yellow for correct word
-                                                # make these cells unclickable
-                                            # reset to starting values for next word to be entered
-                                            clicked_cells.clear()
-                                            clicked_letters.clear()
-                                            last_clicked_cell = None
-                                        else: 
-                                            print("correct but not theme word") # debug
-                                            # make this word unguessable again
-                                            correct_words.append(complete_word) # appending to correct word list 
-                                            words_until_hint = words_until_hint - 1 # one less word before hint! 
-                                            for letter in clicked_cells:
-                                                #highlighting light blue for hint
-                                                pygame.draw.rect(screen, LIGHTBLUE, letter, 5)  
-                                    else: 
-                                        # if word not valid nor a theme word 
-                                        print('Invalid word') #debug
-                                        clicked_cells.clear()
-                                        clicked_letters.clear()
-                                        last_clicked_cell = None
-                        else: 
-                            # if click is not on board or adjacent to last clicked letters, it is invalid 
-                            clicked_cells.clear()
-                            clicked_letters.clear()
-                            last_clicked_cell = None
+                            last_clicked_cell = (row, col)
 
                             #print(f"valid click") #debug
                         #else: 
@@ -340,7 +303,7 @@ def main():
         #'THEME' textbox
         draw_textbox(170, 300, 280, 24, 'THEME', 22, LIGHTBLUE, border=False)
         #strands board!
-        draw_board(screen, game_board, clicked_cells, letter_font)
+        draw_board(screen, board, clicked_cells, letter_font)
         #calling clicked letters to display them 
         draw_clicked_letters(screen, clicked_letters, letter_font, 600, 100)
         draw_hint_button(screen, hint_button_active, 3 - len(correct_words))
