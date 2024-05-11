@@ -11,7 +11,7 @@ import random
 import requests
 import string
 import pygame
-import enchant
+import pyenchant
 
 
 pygame.init()
@@ -38,7 +38,7 @@ board_rows = 5
 font_size = 32
 board_width = 420
 board_height = 420
-#letter_display_height = 50 
+letter_display_height = 50 
 letter_font = pygame.font.SysFont('any_font', 32)
 
 #definitions for hint button: 
@@ -64,9 +64,11 @@ theme_indices = [] # storing indices of the cells of theme words to highlight th
 def datamuse_api_get(query):
     url = f'https://api.datamuse.com/words?ml={query}&sp>???&max=50'
     return requests.get(url).json()
-    
+
+global_select_theme = None
 #getting related words from a theme
 def get_related_words():
+    global global_select_theme
     #chooses a random theme from a created list
     themes = ['music', 'literature', 'weather', 'school', 'technology', 'city', 'farm', 'shopping', 'biomes', 'beach', 'puzzle+games', 'party+goods', 'sports']
     random_theme = random.choice(themes)
@@ -132,7 +134,7 @@ def check_word(complete_word, words):
     response = requests.get(url_2).json() 
     #is_valid_word = [] - these are defined globally now 
    # is_theme_word = []
-    dict = enchant.Dict("en_US")
+    dict = pyenchant.Dict("en_US")
     # possibly here add in highlight code to highlight blue? 
     for iter in complete_word: # for the variable storing the string complete word after player double clicks
         if dict.check(complete_word) == True and complete_word not in words: 

@@ -63,30 +63,17 @@ correct_words = [] # storing correct but non-theme words
 #limited to words > 3 letters
 
 def datamuse_api_get(query):
-    url = 'https://api.datamuse.com'
-    response = requests.get(f'{url}/words?ml={query}&sp>???&max=50')
-    return response.json()
+    url = f'https://api.datamuse.com/words?ml={query}&sp>???&max=50'
+    return requests.get(url).json()
     
 #getting related words from a theme
 def get_related_words():
     #chooses a random theme from a created list
     themes = ['music', 'literature', 'weather', 'school', 'technology', 'city', 'farm', 'shopping', 'biomes', 'beach', 'puzzle+games', 'party+goods', 'sports']
     random_theme = random.choice(themes)
-        #debug: print(random_theme)
-    retrieved = datamuse_api_get(random_theme)
-        #debug: print(retrieved)
-    #prints out retrieved - a list of dictionaries
-    
-    #extract values of the 'word' key in each dictionary
-    #put them into list of strings
-    related_words_prot = [dic['word'] for dic in retrieved]
-        #debug:print(related_words_prot)
-
-    #limit word length and omit non alphabetic symbols
-    related_words_fin = [term for term in related_words_prot if len(term) <= 10 and term.isalpha()]
-        #debug: print(related_words_fin)
-    return random_theme, related_words_fin
-
+    words = [word['word'] for word in datamuse_api_get(random_theme) if word['word'].isalpha() and len(word['word']) <= 10]
+    return random_theme, words
+       
 #creating text file for retrieved words
 def creating_word_list_file(theme, related_words):
     #creating the textfile
@@ -136,12 +123,15 @@ def find_words_by_count():
 
 # function to check whether in list/valid word 
 
-def check_word(combination, word): 
+def check_word(word): 
+    response = requests.get(f'https://api.datamuse.com/words?ml={word}&sp>???&max=50') # start editing here 
+    return bool(response), response[0]['word'] if response else word 
 
+                                                
 
-    ############################generating letters in board
 def generate_board():
     all_letters = string.ascii_uppercase
+    print('this runs')
     return[[random.choice(all_letters) for _ in range (board_cols)] for _ in range(board_rows)]
 
 #formatting the cells of the board
@@ -242,16 +232,15 @@ def hint_cell_interaction(game_board, row, col):
         hinted_cells.remove((row, col)) # when a player clicks, remove cells 
 
 
-def main(random_theme, combination):
-    
-
-    global hint_active
+def main():
+    theme, words = get_related_words()
     game_board = generate_board()
     clicked_cells = set()
     last_clicked_cell = None # to track whether next letter is adjacent
     clicked_letters = [] # tracking clicked letters for display
     words_until_hint = 3
-    hint_button_active = False
+    hint_active = False
+    correct_words = []
 
     screen.fill(WHITE)
     hint_button_rect = draw_hint_button(screen, hint_button_active, words_until_hint)
@@ -260,7 +249,7 @@ def main(random_theme, combination):
     running = True
 
     while running:
-        #screen.fill(WHITE)
+        screen.fill(WHITE)
         # checking whether to activate hint button 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -268,6 +257,7 @@ def main(random_theme, combination):
         #added click_function.py
         # added absolute value function
             elif event.type == pygame.MOUSEBUTTONDOWN:
+            
                 if event.button in (1, 3): # left or right click
                     x_hit, y_hit = pygame.mouse.get_pos()
                     col = (x_hit - 600) // (board_width // board_cols)
@@ -289,9 +279,22 @@ def main(random_theme, combination):
                                 hinted_cells = find_hint_cells(hinted_word, game_board) 
                             elif (row, col) == last_clicked_cell: 
                                 #ADD CODE TO CHECK WHETHER IN API
-                                clicked_cells.clear()
-                                clicked_letters.clear()
-                                last_clicked_cell = None # reset last clicked cell
+                                complete_word = ''.join(clicked_letters).lower()
+                                if complete_word: 
+                                    is_valid, is_theme_word = check_word(combination, word)
+                                    if is_valid: 
+                                        if is_theme_word: 
+                                            hint_cell_interaction(game_board, row, col) 
+                                            clicked_letters.clear()
+                                            last_clicked_cell = None
+
+                                        else: 
+                                            update_hint_progress()
+                                            clicked_letters.clear()
+                                            last_clicked_cell = None
+                                            clicked_cells.clear()
+
+
                             elif last_clicked_cell is None or (
                                 abs(last_clicked_cell[0] - row) <= 1 and
                                 abs(last_clicked_cell[1] - col) <= 1):

@@ -286,7 +286,7 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
             elif event.type == pygame.MOUSEBUTTONDOWN:
-                #if event.button in (1, 3): # left or right click
+            #if event.button in (1, 3): # left or right click
                 # tracking position of mouse
                     x_hit, y_hit = pygame.mouse.get_pos()
                     col = (x_hit - 600) // (board_width // board_cols)
