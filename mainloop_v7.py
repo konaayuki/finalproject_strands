@@ -5,6 +5,10 @@ import os
 import pygame
 #import pyenchant
 
+# currently - need to make double click time longer
+# need to make it so that the word clears from the top of board after 
+# double click or 
+
 pygame.init()
 pygame.font.init()
 
