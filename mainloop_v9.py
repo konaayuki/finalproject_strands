@@ -235,27 +235,27 @@ def find_paths(x, y, board_rows, board_cols, path, visited, paths):
 #function that replaces the spaces on the board with letters in the combination list
 def fill_board(board, combination,all_paths):
 
-    split_list = []
-    # print (split_list)
-    # print (all_paths[0])
+    split_list = [] #define an empty list to store each letter in combination individually
 
-    for word in combination:
-        for letter in word:
-            split_list.append(letter)
-    print('length of split_list:', len(split_list))
-    print("length of hamiltonian path:", all_paths[0])
+    for word in combination: #a loop to run through each word in combination
+        for letter in word: #a loop to run through each letter in each word
+            split_list.append(letter) #append the letter to the list
+    #print('length of split_list:', len(split_list))
+    #print("length of hamiltonian path:", all_paths[0])
 
-    for i in range (0, len(all_paths[0])): 
-        x,y = all_paths[0][i]
-        board[x][y] = split_list[i]
+    for i in range (0, len(all_paths[0])):  #a loop that runs from 0 to the length of the hamiltonian path
+        x,y = all_paths[0][i] #assigns a letter to the coordinate x,y
+        board[x][y] = split_list[i] #replaces the board at x,y with the corresponding letter for that position
 
-    return board
+    return board #return the variable
 
 def generate_hamiltonian_paths(board_rows, board_cols):
-    paths = []
+    paths = [] #define empty list
     start_x, start_y = random.randint(0, board_rows-1), random.randint(0, board_cols-1) #randomly generate starting position for the path
-    find_paths(start_x, start_y, board_rows, board_cols, [], set(), paths)
-    return paths
+    find_paths(start_x, start_y, board_rows, board_cols, [], set(), paths) #call the function to find paths
+    return paths #return the variable
+
+#chatgpt was consulted for the generation of hamiltonian paths
 
 
 # new function to handle click and check for double click based on time 
@@ -277,12 +277,13 @@ def handle_click(board, col, row):
                 check_word(complete_word, board)
                 clicked_letters = [] # clear letters from top of board 
                 last_clicked_cell = None
-                clicked_cells = []
+                #clicked_cells = []
+                clicked_celss = set()
             else: 
                 # should interact with draw_board to turn letters gray
                 clicked_letters.append(board[row][col])
                 last_clicked_cell = (row, col)
-                clicked_cells.append((row, col))
+                clicked_cells.add((row, col))
 
 
             last_click_time = current_time # reset 
@@ -290,7 +291,7 @@ def handle_click(board, col, row):
         # clearing clicked cells if someone clicks elsewhere
         clicked_letters = [] # clear letters from top of board 
         last_clicked_cell = None
-        clicked_cells = []
+        clicked_cells.clear()
         # do I have to call draw_board? 
 
 """
