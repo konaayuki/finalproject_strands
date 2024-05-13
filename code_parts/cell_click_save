@@ -1,0 +1,14 @@
+if 0 <= row < board_rows and 0 <= col < board_cols: 
+                    if (row, col) == last_clicked_cell: #to reset and try a new word (user initiated by clicking the same last letter twice)
+                        clicked_cells.clear()
+                        clicked_letters.clear()
+                    else:
+                            
+                        # condition using absolute value to check distance between clicks
+                        if last_clicked_cell is None or (
+                            abs(last_clicked_cell[0] - row) <= 1 and
+                            abs(last_clicked_cell[1] - col) <= 1):
+                                
+                            clicked_cells.add((row, col))
+                            clicked_letters.append(game_board[row][col])
+                            last_clicked_cell = (row, col)
