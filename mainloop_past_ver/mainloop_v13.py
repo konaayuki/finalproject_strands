@@ -305,6 +305,7 @@ def main():
 
                 if 0 <= row < board_rows and 0 <= col < board_cols: # repeat from handle_click, dk where it should go
                     handle_click(board, col, row)
+
         if not game_over_condition: 
             screen.fill(WHITE)
             draw_board(screen, board, theme_cells)
@@ -321,6 +322,7 @@ def main():
                 game_over_condition = True 
         else: 
             game_over(screen)
+
 
         pygame.display.flip()
         clock.tick(30)
